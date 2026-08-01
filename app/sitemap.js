@@ -1,8 +1,7 @@
 import { connectDB } from "@/lib/db";
 import Game from "@/models/Game";
 import { slugify } from "@/lib/utils";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
+import { siteUrl } from "@/lib/site";
 
 // Static month slugs for the last 12 months
 function getRecentMonthSlugs() {

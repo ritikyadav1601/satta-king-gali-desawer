@@ -2,10 +2,9 @@ import MonthlyChartTable from "@/components/MonthlyChartTable";
 import PublicLayout from "@/components/PublicLayout";
 import { getMonthlyRows } from "@/lib/data";
 import { monthName } from "@/lib/utils";
+import { siteUrl } from "@/lib/site";
 
 export const revalidate = 300;
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
 
 function parseDateFromSlug(slug = "") {
   const raw = decodeURIComponent(slug).replace(/^result-chart-/, "");

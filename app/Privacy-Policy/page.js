@@ -1,8 +1,7 @@
 import PublicLayout from "@/components/PublicLayout";
+import { siteUrl } from "@/lib/site";
 
 export const revalidate = 300;
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
 
 export const metadata = {
   title: "Privacy Policy",

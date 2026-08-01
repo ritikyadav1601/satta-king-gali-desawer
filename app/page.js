@@ -8,15 +8,13 @@ import { WebsiteJsonLd } from "@/components/JsonLd";
 import { getGamesWithTodayResults, getMonthlyRows, getTopGames } from "@/lib/data";
 import { formatTime, istDate, monthName, slugify } from "@/lib/utils";
 import SeoContent from "@/components/SeoContent";
+import { homeDescription, homeTitle, siteUrl } from "@/lib/site";
 
 export const revalidate = 30;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
-
 export const metadata = {
-  title: "Satta King Result Today | Gali, Desawar, Ghaziabad & Faridabad Chart Records",
-  description:
-    "Check daily Satta King Result updates, Gali Satta Result, Desawar Chart, Ghaziabad Result and Faridabad Records. Explore complete old chart history from 2015 to 2025 with updated archives and historical data.",
+  title: homeTitle,
+  description: homeDescription,
   alternates: {
     canonical: siteUrl
   }
@@ -142,7 +140,7 @@ function LiveResultSection({ games, showClock = false }) {
       <div className="live-result-list">
         {games.map((item) => (
           <div className="live-result-item text-center" key={item._id}>
-            <h2 className="live-result-game">{item.name}</h2>
+            <p className="live-result-game">{item.name}</p>
             <p className={`live-result-value${resultClass(item.second)}`}>{item.second}</p>
           </div>
         ))}
@@ -156,7 +154,7 @@ function FeaturedMarketStrip({ game }) {
 
   return (
     <section className="a7-feature-strip">
-      <h2>{game.name}</h2>
+      <p className="a7-feature-name">{game.name}</p>
       <p>{formatTime(game.resultTime)}</p>
       <strong>
         <span className={resultClass(game.first)}>{game.first}</span>

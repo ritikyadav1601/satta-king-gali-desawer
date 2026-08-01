@@ -1,9 +1,8 @@
 import PublicLayout from "@/components/PublicLayout";
 import { getYearChartRows } from "@/lib/data";
+import { siteUrl } from "@/lib/site";
 
 export const revalidate = 300;
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
 
 function ResultText({ value }) {
   const result = value || "-";

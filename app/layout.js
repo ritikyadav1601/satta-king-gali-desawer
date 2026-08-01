@@ -1,16 +1,14 @@
 import "./colors.css";
 import "./globals.css";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
+import { homeDescription, homeTitle, siteUrl } from "@/lib/site";
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Satta King Result Today | Gali, Desawar, Ghaziabad & Faridabad Chart Records",
+    default: homeTitle,
     template: "%s | Satta King Fast"
   },
-  description:
-    "Check daily Satta King Result updates, Gali Satta Result, Desawar Chart, Ghaziabad Result and Faridabad Records. Explore complete old chart history from 2015 to 2025 with updated archives and historical data.",
+  description: homeDescription,
   keywords: [
     "satta king",
     "satta king result",
@@ -34,9 +32,8 @@ export const metadata = {
     canonical: "/"
   },
   openGraph: {
-    title: "Satta King Result Today | Gali, Desawar, Ghaziabad & Faridabad Chart Records",
-    description:
-      "Check daily Satta King Result updates, Gali Satta Result, Desawar Chart, Ghaziabad Result and Faridabad Records. Explore complete old chart history from 2015 to 2025.",
+    title: homeTitle,
+    description: homeDescription,
     url: siteUrl,
     siteName: "Satta King Fast",
     type: "website",
@@ -44,9 +41,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Satta King Result Today | Gali, Desawar, Ghaziabad & Faridabad",
-    description:
-      "Live Satta King results for Gali, Desawar, Ghaziabad, Faridabad and more. Daily updated charts and historical records."
+    title: homeTitle,
+    description: homeDescription
   },
   robots: {
     index: true,

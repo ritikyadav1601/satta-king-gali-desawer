@@ -2,7 +2,7 @@
 // Drop this inside PublicLayout or directly in app/page.js <head> section.
 // Usage: <JsonLd type="website" />  or  <JsonLd type="breadcrumb" items={[...]} />
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sattakingfast.com";
+import { homeDescription, siteUrl } from "@/lib/site";
 
 export function WebsiteJsonLd() {
   const schema = {
@@ -10,8 +10,7 @@ export function WebsiteJsonLd() {
     "@type": "WebSite",
     name: "Satta King Fast",
     url: siteUrl,
-    description:
-      "Check daily Satta King Result updates, Gali Satta Result, Desawar Chart, Ghaziabad Result and Faridabad Records.",
+    description: homeDescription,
     potentialAction: {
       "@type": "SearchAction",
       target: {

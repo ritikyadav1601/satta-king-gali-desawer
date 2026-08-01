@@ -791,14 +791,14 @@ select {
   text-align: center;
 }
 
-.a7-feature-strip h2 {
+.a7-feature-name {
   font-size: 24px;
   font-weight: 500;
   margin: 0;
   text-transform: uppercase;
 }
 
-.a7-feature-strip p {
+.a7-feature-strip p:not(.a7-feature-name) {
   font-size: 18px;
   margin: 8px 0;
 }
@@ -1088,5 +1088,4 @@ select {
   background: var(--chart-header-bg); /* now #000000 */
   color: var(--chart-header-text);    /* still #ffffff, stays white */
 }
-
 

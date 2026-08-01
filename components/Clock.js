@@ -21,5 +21,9 @@ export default function Clock() {
     return () => clearInterval(timer);
   }, []);
 
-  return <h2 className="clock-display text-xl sm:text-2xl font-semibold mb-4 uppercase text-center">{value}</h2>;
+  return (
+    <time className="clock-display text-xl sm:text-2xl font-semibold mb-4 uppercase text-center" dateTime={value ? new Date().toISOString() : undefined}>
+      {value || "Loading current time…"}
+    </time>
+  );
 }
