@@ -16,7 +16,7 @@ export const metadata = {
   title: homeTitle,
   description: homeDescription,
   alternates: {
-    canonical: siteUrl
+    canonical: `${siteUrl}/`
   }
 };
 
