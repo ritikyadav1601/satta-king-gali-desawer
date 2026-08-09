@@ -109,6 +109,11 @@ function getHeroGames(games) {
     .filter((game) => !["desawer", "desawar"].includes(normalizeGameName(game.name)))
     .sort((a, b) => timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime));
 
+  // Gali is the final featured result of the daily cycle. Once it has been
+  // declared, keep the hero focused on Gali until its result resets to XX.
+  const gali = byTime.find((game) => normalizeGameName(game.name) === "gali");
+  if (gali && !isPending(gali.second)) return [gali];
+
   // Game 1: next upcoming (result time hasn't passed yet)
   const upcoming = byTime.find((game) => timeToMinutes(game.resultTime) > now) || byTime[0];
 
