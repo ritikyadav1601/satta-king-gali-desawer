@@ -27,32 +27,35 @@ function resultClass(value) {
 const featuredGameList = [
   { key: "desawer", name: "DESAWER" },
   { key: "desawar", name: "DESAWER" },
-  { key: "sadar bazar", name: "Sadar bazar" },
-  { key: "delhi darbar", name: "Delhi Darbar" },
-  { key: "gwalior", name: "Gwalior" },
-  { key: "delhi bazar", name: "Delhi BAZAR" },
-  { key: "new ganga", name: "New Ganga" },
-  { key: "delhi matka", name: "Delhi Matka" },
-  { key: "shri ganesh", name: "Shri Ganesh" },
-  { key: "agra", name: "Agra" },
-  { key: "faridabad", name: "FARIDABAD" },
-  { key: "fatehabad", name: "Fatehabad" },
-  { key: "alwar", name: "Alwar" },
-  { key: "mandi bazar", name: "Mandi Bazar" },
-  { key: "ghaziabad king", name: "Ghaziabad King" },
-  { key: "ghaziabad", name: "GHAZIABAD" },
-  { key: "dwarka", name: "Dwarka" },
-  { key: "gali", name: "GALI" },
-  { key: "shiv dham", name: "Shiv Dham" },
-  { key: "pushkar bazar", name: "Pushkar Bazar" },
-  { key: "delhi metro", name: "Delhi Metro" },
-  { key: "shri sayam", name: "Shri Sayam" },
-  { key: "kolmbia", name: "Kolmbia" },
-  { key: "makka-madina", name: "Makka-Madina" },
-  { key: "kalka night", name: "Kalka Night" }
+  { key: "sadar bazar", name: "Sadar bazar", resultTime: "13:40:00" },
+  { key: "gwalior", name: "Gwalior", resultTime: "14:40:00" },
+  { key: "delhi bazar", name: "Delhi Bazar", resultTime: "15:15:00" },
+  { key: "delhi matka", name: "Delhi Matka", resultTime: "15:40:00" },
+  { key: "shri ganesh", name: "Shri Ganesh", resultTime: "16:40:00" },
+  { key: "agra", name: "Agra", resultTime: "17:30:00" },
+  { key: "faridabad", name: "Faridabad", resultTime: "18:10:00" },
+  { key: "alwar", name: "Alwar", resultTime: "19:35:00" },
+  { key: "ghaziabad", name: "Gaziabad", resultTime: "21:50:00" },
+  { key: "dwarka", name: "Dwarka", resultTime: "22:35:00" },
+  { key: "gali", name: "Gali", resultTime: "23:50:00" }
 ];
 
 const featuredGameKeys = new Set(featuredGameList.map((game) => game.key));
+
+const lowerGameList = [
+  { keys: ["shiv dham"], name: "Shiv Dham" },
+  { keys: ["pushkar bazar"], name: "Pushkar Bazar" },
+  { keys: ["delhi metro"], name: "Delhi Metro" },
+  { keys: ["shri shyam", "shri sayam"], name: "Shri Shyam" },
+  { keys: ["kolambia", "kolmbia"], name: "Kolambia" },
+  { keys: ["makka-madina"], name: "Makka-Madina" },
+  { keys: ["kalka night"], name: "Kalka Night" }
+];
+
+function lowerGameDetails(name = "") {
+  const normalized = normalizeGameName(name);
+  return lowerGameList.find((item) => item.keys.includes(normalized));
+}
 
 function normalizeGameName(name = "") {
   return String(name).toLowerCase().trim();
@@ -102,7 +105,9 @@ function resultUpdatedTime(game) {
 
 function getHeroGames(games) {
   const now = currentIstMinutes();
-  const byTime = [...games].sort((a, b) => timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime));
+  const byTime = games
+    .filter((game) => !["desawer", "desawar"].includes(normalizeGameName(game.name)))
+    .sort((a, b) => timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime));
 
   // Game 1: next upcoming (result time hasn't passed yet)
   const upcoming = byTime.find((game) => timeToMinutes(game.resultTime) > now) || byTime[0];
@@ -111,19 +116,20 @@ function getHeroGames(games) {
   const selectedIds = new Set(selected.map((game) => String(game._id)));
 
   // Game 2 & 3: last 2 games with declared (non-pending) results, most recent first
-  const recentlyDeclared = [...games]
+  const recentlyDeclared = [...byTime]
     .filter((game) => !selectedIds.has(String(game._id)) && !isPending(game.second))
     .sort((a, b) => resultUpdatedTime(b) - resultUpdatedTime(a));
 
   for (const game of recentlyDeclared) {
-    if (selected.length >= 3) break;
+    if (selected.length >= 2) break;
     selected.push(game);
     selectedIds.add(String(game._id));
   }
 
   // fallback: fill with any remaining games
   for (const game of games) {
-    if (selected.length >= 3) break;
+    if (selected.length >= 2) break;
+    if (["desawer", "desawar"].includes(normalizeGameName(game.name))) continue;
     if (!selectedIds.has(String(game._id))) selected.push(game);
   }
 
@@ -185,12 +191,25 @@ export default async function HomePage() {
     .map((item) => {
       const candidates = gamesByName.get(item.key) || [];
       const game = pickBestGame(candidates, item.name);
-      return game ? { ...game, name: item.name } : null;
+      return game ? { ...game, name: item.name, resultTime: item.resultTime || game.resultTime } : null;
     })
     .filter(Boolean)
     .filter((game, index, list) => list.findIndex((item) => normalizeGameName(item.name) === normalizeGameName(game.name)) === index);
   const featuredTopGames = await getTopGames(featuredGames);
-  const remainingGames = games.filter((game) => !featuredGameKeys.has(normalizeGameName(game.name)));
+  const remainingGames = games
+    .filter((game) => !featuredGameKeys.has(normalizeGameName(game.name)))
+    .map((game) => {
+      const details = lowerGameDetails(game.name);
+      return details ? { ...game, name: details.name } : game;
+    })
+    .sort((a, b) => {
+      const aIndex = lowerGameList.findIndex((item) => item.name === a.name);
+      const bIndex = lowerGameList.findIndex((item) => item.name === b.name);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime);
+    });
   const remainingTopGames = await getTopGames(remainingGames);
   const yearlyGames = [...games].sort((a, b) => {
     const aOrder = yearlyChartOrder(a.name);

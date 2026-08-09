@@ -2,8 +2,9 @@ import Link from "next/link";
 import { formatTime, slugify } from "@/lib/utils";
 
 function ResultText({ value }) {
-  const pending = String(value).toUpperCase() === "XX";
-  return <span className={pending ? "result-pending a7-wait" : undefined}>{pending ? "wait" : value}</span>;
+  const result = String(value || "XX").toUpperCase();
+  const pending = result === "XX";
+  return <span className={pending ? "result-pending a7-wait" : undefined}>{pending ? "wait" : result}</span>;
 }
 
 function GameRow({ game }) {
