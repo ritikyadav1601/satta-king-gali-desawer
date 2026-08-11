@@ -23,10 +23,10 @@ function GameRow({ game }) {
   );
 }
 
-export default function GameCards({ games }) {
-  const filtered = games.filter(
-    (game) => game.name?.toLowerCase() !== "desawer"
-  );
+export default function GameCards({ games, includeDesawer = false }) {
+  const filtered = includeDesawer
+    ? games
+    : games.filter((game) => game.name?.toLowerCase() !== "desawer");
 
   if (!filtered.length) {
     return <div className="empty-state p-4 text-center font-bold">No active games found. Import SQL data from admin database backup.</div>;

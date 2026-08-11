@@ -6,6 +6,7 @@ import MonthlyChartTable from "@/components/MonthlyChartTable";
 import PublicLayout from "@/components/PublicLayout";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 import { getGamesWithTodayResults, getMonthlyRows, getTopGames } from "@/lib/data";
+import { getExtraGamesWithTodayResults } from "@/lib/extraGames";
 import { formatTime, istDate, monthName, slugify } from "@/lib/utils";
 import SeoContent from "@/components/SeoContent";
 import { homeDescription, homeTitle, siteUrl } from "@/lib/site";
@@ -183,7 +184,13 @@ function yearlyChartOrder(name = "") {
 }
 
 export default async function HomePage() {
-  const games = await getGamesWithTodayResults();
+  const [games, extraGames] = await Promise.all([
+    getGamesWithTodayResults(),
+    getExtraGamesWithTodayResults().catch((error) => {
+      console.error("[extra-games] read failed:", error.message);
+      return [];
+    })
+  ]);
   const monthly = await getMonthlyRows({ untilToday: true, games });
   const gamesByName = games.reduce((map, game) => {
     const key = normalizeGameName(game.name);
@@ -201,7 +208,7 @@ export default async function HomePage() {
     .filter(Boolean)
     .filter((game, index, list) => list.findIndex((item) => normalizeGameName(item.name) === normalizeGameName(game.name)) === index);
   const featuredTopGames = await getTopGames(featuredGames);
-  const remainingGames = games
+  const primaryRemainingGames = games
     .filter((game) => !featuredGameKeys.has(normalizeGameName(game.name)))
     .map((game) => {
       const details = lowerGameDetails(game.name);
@@ -215,6 +222,7 @@ export default async function HomePage() {
       if (bIndex !== -1) return 1;
       return timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime);
     });
+  const remainingGames = extraGames.length ? extraGames : primaryRemainingGames;
   const remainingTopGames = await getTopGames(remainingGames);
   const yearlyGames = [...games].sort((a, b) => {
     const aOrder = yearlyChartOrder(a.name);
@@ -238,7 +246,7 @@ export default async function HomePage() {
       <AdBlock />
       <GameCards games={featuredGames} />
       <LiveResultSection games={remainingTopGames} />
-      <GameCards games={remainingGames} />
+      <GameCards games={remainingGames} includeDesawer={extraGames.length > 0} />
       <MonthlyChartTable title={title} rows={monthly.rows} columns={monthly.gameColumns} dateKey={today} />
       <section className="a7-year-links">
         <h2>SATTA RECORD CHART {year}</h2>
