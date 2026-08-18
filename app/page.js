@@ -26,19 +26,19 @@ function resultClass(value) {
 }
 
 const featuredGameList = [
-  { key: "desawer", name: "DESAWER" },
-  { key: "desawar", name: "DESAWER" },
-  { key: "sadar bazar", name: "Sadar bazar", resultTime: "13:40:00" },
-  { key: "gwalior", name: "Gwalior", resultTime: "14:40:00" },
-  { key: "delhi bazar", name: "Delhi Bazar", resultTime: "15:15:00" },
-  { key: "delhi matka", name: "Delhi Matka", resultTime: "15:40:00" },
-  { key: "shri ganesh", name: "Shri Ganesh", resultTime: "16:40:00" },
-  { key: "agra", name: "Agra", resultTime: "17:30:00" },
-  { key: "faridabad", name: "Faridabad", resultTime: "18:10:00" },
-  { key: "alwar", name: "Alwar", resultTime: "19:35:00" },
-  { key: "ghaziabad", name: "Gaziabad", resultTime: "21:50:00" },
-  { key: "dwarka", name: "Dwarka", resultTime: "22:35:00" },
-  { key: "gali", name: "Gali", resultTime: "23:50:00" }
+  { key: "desawer", name: "DESAWER", resultTime: "05:30:00" },
+  { key: "desawar", name: "DESAWER", resultTime: "05:30:00" },
+  { key: "sadar bazar", name: "Sadar bazar", resultTime: "13:45:00" },
+  { key: "gwalior", name: "Gwalior", resultTime: "14:45:00" },
+  { key: "delhi bazar", name: "Delhi Bazar", resultTime: "15:20:00" },
+  { key: "delhi matka", name: "Delhi Matka", resultTime: "15:50:00" },
+  { key: "shri ganesh", name: "Shri Ganesh", resultTime: "16:50:00" },
+  { key: "agra", name: "Agra", resultTime: "17:40:00" },
+  { key: "faridabad", name: "Faridabad", resultTime: "18:25:00" },
+  { key: "alwar", name: "Alwar", resultTime: "19:50:00" },
+  { key: "ghaziabad", name: "Gaziabad", resultTime: "22:15:00" },
+  { key: "dwarka", name: "Dwarka", resultTime: "22:55:00" },
+  { key: "gali", name: "Gali", resultTime: "23:58:00" }
 ];
 
 const featuredGameKeys = new Set(featuredGameList.map((game) => game.key));
@@ -115,8 +115,10 @@ function getHeroGames(games) {
   const gali = byTime.find((game) => normalizeGameName(game.name) === "gali");
   if (gali && !isPending(gali.second)) return [gali];
 
-  // Game 1: next upcoming (result time hasn't passed yet)
-  const upcoming = byTime.find((game) => timeToMinutes(game.resultTime) > now) || byTime[0];
+  // A game is upcoming only while today's result is still pending. Results can
+  // be declared before the scheduled time, so the result status takes priority.
+  const pendingGames = byTime.filter((game) => isPending(game.second));
+  const upcoming = pendingGames.find((game) => timeToMinutes(game.resultTime) > now) || pendingGames[0];
 
   const selected = upcoming ? [upcoming] : [];
   const selectedIds = new Set(selected.map((game) => String(game._id)));
