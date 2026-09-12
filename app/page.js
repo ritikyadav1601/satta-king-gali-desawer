@@ -9,17 +9,19 @@ import { getGamesWithTodayResults, getMonthlyRows, getTopGames } from "@/lib/dat
 import { getExtraGamesWithTodayResults } from "@/lib/extraGames";
 import { formatTime, istDate, monthName, slugify } from "@/lib/utils";
 import SeoContent from "@/components/SeoContent";
-import { homeDescription, homeTitle, siteUrl } from "@/lib/site";
+import { getHomeDescription, getHomeTitle, siteUrl } from "@/lib/site";
 
 export const revalidate = 30;
 
-export const metadata = {
-  title: homeTitle,
-  description: homeDescription,
-  alternates: {
-    canonical: `${siteUrl}/`
-  }
-};
+export function generateMetadata() {
+  return {
+    title: { absolute: getHomeTitle() },
+    description: getHomeDescription(),
+    alternates: {
+      canonical: `${siteUrl}/`
+    }
+  };
+}
 
 function resultClass(value) {
   return String(value).toUpperCase() === "XX" ? " result-pending" : "";

@@ -12,11 +12,17 @@
     "sync:a7:smart": "node scripts/sync-a7-results.js --smart --window-minutes 120"
   },
   "dependencies": {
+    "@portabletext/react": "^3.2.4",
+    "@sanity/image-url": "^1.2.0",
+    "@sanity/vision": "^3.99.0",
     "bcryptjs": "^2.4.3",
     "mongoose": "^8.9.5",
     "next": "^15.1.6",
+    "next-sanity": "^9.12.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "eslint": "^9.18.0",

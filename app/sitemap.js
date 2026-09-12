@@ -2,6 +2,8 @@ import { connectDB } from "@/lib/db";
 import Game from "@/models/Game";
 import { slugify } from "@/lib/utils";
 import { siteUrl } from "@/lib/site";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { CURRENT_SITE, POST_SLUGS_QUERY } from "@/sanity/lib/queries";
 
 // Static month slugs for the last 12 months
 function getRecentMonthSlugs() {
@@ -41,6 +43,12 @@ export default async function sitemap() {
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9
+    },
+    {
+      url: `${siteUrl}/blog`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.8
     },
     {
       url: `${siteUrl}/about-us`,
@@ -86,5 +94,17 @@ export default async function sitemap() {
     }
   ]);
 
-  return [...staticPages, ...monthlyChartPages, ...yearChartPages];
+  const blogPosts = await sanityFetch({
+    query: POST_SLUGS_QUERY,
+    params: { site: CURRENT_SITE },
+    fallback: []
+  });
+  const blogPages = blogPosts.map((post) => ({
+    url: `${siteUrl}/blog/${post.slug}`,
+    lastModified: post._updatedAt ? new Date(post._updatedAt) : now,
+    changeFrequency: "weekly",
+    priority: 0.7
+  }));
+
+  return [...staticPages, ...monthlyChartPages, ...yearChartPages, ...blogPages];
 }

@@ -199,6 +199,129 @@ select {
   margin-bottom: 14px;
 }
 
+.blog-container,
+.blog-post-container {
+  margin: 28px auto;
+  max-width: 1100px;
+  padding: 0 16px;
+}
+
+.blog-page-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.blog-page-header h1,
+.blog-post h1 {
+  color: var(--brand-primary-dark);
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.blog-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
+}
+
+.blog-card,
+.blog-post,
+.blog-empty {
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.blog-empty {
+  margin-bottom: 22px;
+  padding: 22px;
+  text-align: center;
+}
+
+.blog-card-image {
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.blog-card-content {
+  padding: 18px;
+}
+
+.blog-card-content h2 {
+  font-size: 21px;
+  line-height: 1.25;
+  margin: 5px 0 10px;
+}
+
+.blog-card-content h2 a,
+.blog-read-more {
+  color: var(--brand-primary-dark);
+  text-decoration: none;
+}
+
+.blog-read-more {
+  display: inline-block;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.blog-date {
+  color: #687078;
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+
+.blog-post {
+  margin: 0 auto;
+  max-width: 850px;
+  padding: clamp(20px, 4vw, 42px);
+}
+
+.blog-post h1 {
+  font-size: clamp(28px, 5vw, 44px);
+}
+
+.blog-cover-image,
+.blog-inline-image img {
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  margin: 24px 0;
+  width: 100%;
+}
+
+.blog-body {
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.blog-body h2,
+.blog-body h3 {
+  color: var(--brand-primary-dark);
+  line-height: 1.3;
+  margin: 30px 0 12px;
+}
+
+.blog-body a {
+  color: var(--brand-primary);
+}
+
+.blog-body blockquote {
+  border-left: 4px solid var(--brand-secondary);
+  margin: 24px 0;
+  padding: 4px 0 4px 18px;
+}
+
+.sanity-setup {
+  font-family: Arial, sans-serif;
+  margin: 80px auto;
+  max-width: 720px;
+  padding: 24px;
+}
+
 .live-result-section {
   align-items: center;
   background: linear-gradient(180deg, var(--site-surface) 0%, var(--site-surface-soft) 100%);
@@ -1088,4 +1211,3 @@ select {
   background: var(--chart-header-bg); /* now #000000 */
   color: var(--chart-header-text);    /* still #ffffff, stays white */
 }
-

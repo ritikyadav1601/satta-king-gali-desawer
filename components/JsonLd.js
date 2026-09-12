@@ -2,7 +2,7 @@
 // Drop this inside PublicLayout or directly in app/page.js <head> section.
 // Usage: <JsonLd type="website" />  or  <JsonLd type="breadcrumb" items={[...]} />
 
-import { homeDescription, siteUrl } from "@/lib/site";
+import { getHomeDescription, siteUrl } from "@/lib/site";
 
 export function WebsiteJsonLd() {
   const schema = {
@@ -10,7 +10,7 @@ export function WebsiteJsonLd() {
     "@type": "WebSite",
     name: "Satta King Fast",
     url: siteUrl,
-    description: homeDescription,
+    description: getHomeDescription(),
     potentialAction: {
       "@type": "SearchAction",
       target: {

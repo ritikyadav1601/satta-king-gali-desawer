@@ -8,14 +8,7 @@ export default function AdBlock() {
   return (
     <>
       <section className="a7-notifications">
-        <div className="a7-notification">
-          <p>"Now Telegram players can also join our Telegram channel to get results quickly and receive superfast results."</p>
-          <a href={`https://t.me/superfastresultupdate`} target="_blank" rel="noopener noreferrer">JOIN TELEGRAM</a>
-        </div>
-        <div className="a7-notification">
-          <p>"Now WhatsApp players can also join our WhatsApp channel to get results quickly and receive superfast results."</p>
-          <a href={`https://wa.me/+${whatsapp}`} target="_blank" rel="noopener noreferrer">JOIN WHATSAPP</a>
-        </div>
+      
        
       </section>
       <section className="a7-ads-container">
@@ -35,7 +28,7 @@ export default function AdBlock() {
             <p><strong>⏰ द्वारका -------------- 10:10 pm</strong></p>
             <p><strong>⏰ गली ----------------- 11:20 pm</strong></p>
             <p><strong>⏰ दिसावर -------------- 1:30 am</strong></p>
-            <p><a href={`https://wa.me/+${whatsapp}`} target="_blank" rel="noopener noreferrer"><strong>Game play करने के लिये नीचे लिंक पर क्लिक करे</strong></a></p>
+            <p>Game play करने के लिये नीचे लिंक पर क्लिक करे</p>
             <p><a className="a7-whatsapp-pill" href={`https://wa.me/+${whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></p>
           </article>
         ))}
