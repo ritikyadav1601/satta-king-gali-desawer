@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/site-config";
+import { getSiteSettings } from "@/lib/site-settings";
 
-export default function PublicLayout({ children }) {
+export default async function PublicLayout({ children }) {
   const year = new Date().getFullYear();
-  const whatsapp = siteConfig.whatsappNumber;
+  const { whatsappNumber: whatsapp } = await getSiteSettings();
 
   return (
     <section className="site-shell">

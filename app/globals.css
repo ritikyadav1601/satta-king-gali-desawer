@@ -250,13 +250,15 @@ select {
   padding: 18px;
 }
 
-.blog-card-content h2 {
+.blog-card-content h2,
+.blog-card-content h3 {
   font-size: 21px;
   line-height: 1.25;
   margin: 5px 0 10px;
 }
 
 .blog-card-content h2 a,
+.blog-card-content h3 a,
 .blog-read-more {
   color: var(--brand-primary-dark);
   text-decoration: none;
@@ -1210,4 +1212,52 @@ select {
 .chart-header-row {
   background: var(--chart-header-bg); /* now #000000 */
   color: var(--chart-header-text);    /* still #ffffff, stays white */
+}
+
+/* Highlighted "today result" box on the yearly chart pages */
+.year-today-box {
+  animation: yearTodayGlow 1.6s ease-in-out infinite alternate;
+  background: linear-gradient(135deg, var(--brand-primary-dark), var(--brand-primary));
+  border: 3px solid var(--brand-secondary);
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25), 0 6px 18px rgba(0, 0, 0, 0.35);
+  margin: 12px 8px;
+  padding: 16px 10px 14px;
+}
+
+.year-today-box .a7-feature-name {
+  color: var(--brand-secondary);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.year-today-box strong {
+  color: #ffffff;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.year-today-box strong span:last-child:not(.a7-arrow) {
+  color: var(--brand-secondary);
+}
+
+@keyframes yearTodayGlow {
+  from {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2), 0 6px 18px rgba(0, 0, 0, 0.35);
+  }
+
+  to {
+    box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.55), 0 0 22px rgba(212, 175, 55, 0.6);
+  }
+}
+
+@media (max-width: 640px) {
+  .year-today-box .a7-feature-name {
+    font-size: 20px;
+  }
+
+  .year-today-box strong {
+    font-size: 32px;
+  }
 }

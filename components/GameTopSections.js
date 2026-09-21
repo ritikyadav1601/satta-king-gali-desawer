@@ -1,29 +1,11 @@
-import Link from "next/link";
 import AdBlock from "@/components/AdBlock";
 import Clock from "@/components/Clock";
 import GameCards from "@/components/GameCards";
-import MonthlyChartTable from "@/components/MonthlyChartTable";
-import PublicLayout from "@/components/PublicLayout";
-import { WebsiteJsonLd } from "@/components/JsonLd";
-import { getGamesWithTodayResults, getMonthlyRows, getTopGames } from "@/lib/data";
-import { getExtraGamesWithTodayResults } from "@/lib/extraGames";
-import { formatTime, istDate, monthName, slugify } from "@/lib/utils";
-import SeoContent from "@/components/SeoContent";
-import HomeBlogSection from "@/components/HomeBlogSection";
-import { getHomeDescription, getHomeTitle, siteUrl } from "@/lib/site";
+import { getGamesWithTodayResults } from "@/lib/data";
+import { formatTime } from "@/lib/utils";
 
-export const revalidate = 30;
-
-export function generateMetadata() {
-  return {
-    title: { absolute: getHomeTitle() },
-    description: getHomeDescription(),
-    alternates: {
-      canonical: `${siteUrl}/`
-    }
-  };
-}
-
+// Top-of-page block shown on the home page (live results, featured market,
+// khaiwal ad and the main results table). Reused on the yearly chart pages.
 function resultClass(value) {
   return String(value).toUpperCase() === "XX" ? " result-pending" : "";
 }
@@ -44,29 +26,9 @@ const featuredGameList = [
   { key: "gali", name: "Gali", resultTime: "23:58:00" }
 ];
 
-const featuredGameKeys = new Set(featuredGameList.map((game) => game.key));
-
-const lowerGameList = [
-  { keys: ["shiv dham"], name: "Shiv Dham" },
-  { keys: ["pushkar bazar"], name: "Pushkar Bazar" },
-  { keys: ["delhi metro"], name: "Delhi Metro" },
-  { keys: ["shri shyam", "shri sayam"], name: "Shri Shyam" },
-  { keys: ["kolambia", "kolmbia"], name: "Kolambia" },
-  { keys: ["makka-madina"], name: "Makka-Madina" },
-  { keys: ["kalka night"], name: "Kalka Night" }
-];
-
-function lowerGameDetails(name = "") {
-  const normalized = normalizeGameName(name);
-  return lowerGameList.find((item) => item.keys.includes(normalized));
-}
 
 function normalizeGameName(name = "") {
   return String(name).toLowerCase().trim();
-}
-
-function featuredGameOrder(name = "") {
-  return featuredGameList.findIndex((game) => game.key === normalizeGameName(name));
 }
 
 function isPending(value) {
@@ -182,21 +144,8 @@ function FeaturedMarketStrip({ game }) {
   );
 }
 
-function yearlyChartOrder(name = "") {
-  const normalized = String(name).toLowerCase().trim();
-  const index = featuredGameList.findIndex((game) => game.key === normalized);
-  return index === -1 ? undefined : index;
-}
-
-export default async function HomePage() {
-  const [games, extraGames] = await Promise.all([
-    getGamesWithTodayResults(),
-    getExtraGamesWithTodayResults().catch((error) => {
-      console.error("[extra-games] read failed:", error.message);
-      return [];
-    })
-  ]);
-  const monthly = await getMonthlyRows({ untilToday: true, games });
+export default async function GameTopSections({ games: providedGames }) {
+  const games = providedGames || (await getGamesWithTodayResults());
   const gamesByName = games.reduce((map, game) => {
     const key = normalizeGameName(game.name);
     const existing = map.get(key) || [];
@@ -212,59 +161,15 @@ export default async function HomePage() {
     })
     .filter(Boolean)
     .filter((game, index, list) => list.findIndex((item) => normalizeGameName(item.name) === normalizeGameName(game.name)) === index);
-  const featuredTopGames = await getTopGames(featuredGames);
-  const primaryRemainingGames = games
-    .filter((game) => !featuredGameKeys.has(normalizeGameName(game.name)))
-    .map((game) => {
-      const details = lowerGameDetails(game.name);
-      return details ? { ...game, name: details.name } : game;
-    })
-    .sort((a, b) => {
-      const aIndex = lowerGameList.findIndex((item) => item.name === a.name);
-      const bIndex = lowerGameList.findIndex((item) => item.name === b.name);
-      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-      if (aIndex !== -1) return -1;
-      if (bIndex !== -1) return 1;
-      return timeToMinutes(a.resultTime) - timeToMinutes(b.resultTime);
-    });
-  const remainingGames = extraGames.length ? extraGames : primaryRemainingGames;
-  const remainingTopGames = await getTopGames(remainingGames);
-  const yearlyGames = [...games].sort((a, b) => {
-    const aOrder = yearlyChartOrder(a.name);
-    const bOrder = yearlyChartOrder(b.name);
-    if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
-    if (aOrder !== undefined) return -1;
-    if (bOrder !== undefined) return 1;
-    return String(a.resultTime).localeCompare(String(b.resultTime)) || normalizeGameName(a.name).localeCompare(normalizeGameName(b.name));
-  });
-  const today = istDate();
-  const year = new Date().getFullYear();
-  const title = `Satta Result Chart ${monthName(today)}`;
   const featuredMarket = featuredGames.find((game) => normalizeGameName(game.name) === "desawer") || featuredGames[0];
   const heroGames = getHeroGames(featuredGames);
 
   return (
-    <PublicLayout>
-      <WebsiteJsonLd />
-      <LiveResultSection games={heroGames.length ? heroGames : featuredTopGames} showClock />
+    <>
+      <LiveResultSection games={heroGames} showClock />
       <FeaturedMarketStrip game={featuredMarket} />
       <AdBlock />
       <GameCards games={featuredGames} />
-      <LiveResultSection games={remainingTopGames} />
-      <GameCards games={remainingGames} includeDesawer={extraGames.length > 0} />
-      <MonthlyChartTable title={title} rows={monthly.rows} columns={monthly.gameColumns} dateKey={today} />
-      <section className="a7-year-links">
-        <h2>SATTA RECORD CHART {year}</h2>
-        <div className="a7-year-link-list">
-          {yearlyGames.map((game) => (
-            <Link href={`/year-chart/${slugify(game.name)}-result-chart-${year}`} key={game._id}>
-              {game.name} {year}
-            </Link>
-          ))}
-        </div>
-      </section>
-      <SeoContent />
-      <HomeBlogSection />
-    </PublicLayout>
+    </>
   );
 }

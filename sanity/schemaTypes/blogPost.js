@@ -1,10 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-const sites = [
-  { title: "Satta King Gali Disawar", value: "https://www.sattakinggalidisawar.com/" },
-  { title: "Satta Online Result", value: "https://www.sattaonlineresult.com/" },
-  { title: "Live Satta King", value: "https://www.live-sattaking.com/" }
-];
+import { CURRENT_SITE } from "../site";
 
 export const blogPost = defineType({
   name: "blogPost",
@@ -15,9 +11,8 @@ export const blogPost = defineType({
       name: "site",
       title: "Target Site",
       type: "string",
-      description: "This post will appear only on the selected website.",
-      options: { list: sites, layout: "dropdown" },
-      validation: (rule) => rule.required()
+      initialValue: CURRENT_SITE,
+      hidden: true
     }),
     defineField({
       name: "title",
@@ -91,9 +86,6 @@ export const blogPost = defineType({
     })
   ],
   preview: {
-    select: { title: "title", site: "site", media: "coverImage" },
-    prepare({ title, site, media }) {
-      return { title, subtitle: sites.find((item) => item.value === site)?.title || site, media };
-    }
+    select: { title: "title", media: "coverImage" }
   }
 });

@@ -1,13 +1,27 @@
+import GameTopSections from "@/components/GameTopSections";
 import PublicLayout from "@/components/PublicLayout";
-import { getYearChartRows } from "@/lib/data";
+import { getGamesWithTodayResults, getYearChartRows } from "@/lib/data";
+import { getExtraGamesWithTodayResults } from "@/lib/extraGames";
+import { formatTime } from "@/lib/utils";
 import { siteUrl } from "@/lib/site";
 
-export const revalidate = 300;
+export const revalidate = 30;
 
 function ResultText({ value }) {
   const result = value || "-";
   const pending = String(result).toUpperCase() === "XX";
   return <span className={pending ? "result-pending" : undefined}>{result}</span>;
+}
+
+function gameKey(name = "") {
+  const key = String(name).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  if (["desawar", "disawer", "disawar"].includes(key)) return "desawer";
+  if (key === "ghaziabad") return "gaziabad";
+  return key;
+}
+
+function resultClass(value) {
+  return String(value).toUpperCase() === "XX" ? "result-pending" : undefined;
 }
 
 export async function generateMetadata({ params }) {
@@ -38,11 +52,28 @@ export default async function YearChartPage({ params }) {
   const match = decodeURIComponent(resolvedParams.slugYear).match(/^(.+)-result-chart-(\d{4})$/);
   const slug = match?.[1] || "desawer";
   const year = Number(match?.[2] || new Date().getFullYear());
-  const { rows, game } = await getYearChartRows(slug, year);
+  const [{ rows, game }, games, extraGames] = await Promise.all([
+    getYearChartRows(slug, year),
+    getGamesWithTodayResults(),
+    getExtraGamesWithTodayResults().catch(() => [])
+  ]);
+  const todayGame = [...games, ...extraGames].find((item) => gameKey(item.name) === gameKey(slug));
   const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
   return (
     <PublicLayout>
+      {todayGame ? (
+        <section className="a7-feature-strip year-today-box">
+          <p className="a7-feature-name">{todayGame.name} - Today Result</p>
+          <p>{formatTime(todayGame.resultTime)}</p>
+          <strong>
+            <span className={resultClass(todayGame.first)}>{todayGame.first}</span>
+            <span className="a7-arrow">➜</span>
+            <span className={resultClass(todayGame.second)}>{todayGame.second}</span>
+          </strong>
+        </section>
+      ) : null}
+      <GameTopSections games={games} />
       <div className="max-w-lg mx-auto px-4 py-5 text-center flex flex-wrap justify-center gap-3 mt-5 -mb-5 lg:-mb-8">
         <h1 className="text-2xl md:text-1xl font-bold">Select Year</h1>
         <form action={`/year-chart/${slug}-result-chart-${year}`} className="flex gap-3" id="yearForm">

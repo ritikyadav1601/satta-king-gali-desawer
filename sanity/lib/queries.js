@@ -1,6 +1,8 @@
 import { defineQuery } from "next-sanity";
 
-export const CURRENT_SITE = "https://www.sattakinggalidisawar.com/";
+import { CURRENT_SITE } from "../site";
+
+export { CURRENT_SITE };
 
 export const POSTS_QUERY = defineQuery(`
   *[_type == "blogPost" && site == $site && defined(slug.current)]
@@ -31,5 +33,12 @@ export const POST_SLUGS_QUERY = defineQuery(`
   *[_type == "blogPost" && site == $site && defined(slug.current)] {
     "slug": slug.current,
     _updatedAt
+  }
+`);
+
+export const SITE_SETTINGS_QUERY = defineQuery(`
+  *[_type == "siteSettings" && site == $site][0] {
+    khaiwalName,
+    whatsappNumber
   }
 `);

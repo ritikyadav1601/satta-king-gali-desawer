@@ -1,9 +1,7 @@
-import { siteConfig } from "@/lib/site-config";
+import { getSiteSettings } from "@/lib/site-settings";
 
-export default function AdBlock() {
-  const name = siteConfig.khaiwalName;
-  const whatsapp = siteConfig.whatsappNumber;
-  const telegram = siteConfig.telegramLink;
+export default async function AdBlock() {
+  const { khaiwalName: name, whatsappNumber: whatsapp } = await getSiteSettings();
 
   return (
     <>
